@@ -22,14 +22,14 @@ stages{
           failure {
                     emailext body: 'Congragulation your build failure', subject: 'Failure', to: 'satishpanda430@gmail.com'
                 }
-                
+            }
             }
               stage('Deployment'){
             steps {
                 echo 'Sucessfully Deploy'
             }
         }
-        }
+        
     
             }
 }
