@@ -29,6 +29,7 @@ stages{
                 echo 'Sucessfully Deploy'
             }
         }
+        }
     
             }
 }
