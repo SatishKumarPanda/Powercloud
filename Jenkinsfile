@@ -1,35 +1,36 @@
 pipeline {
-    agent any
-    
+    agent any 
     tools {
         maven 'maven'
     }
-    triggers {
-         pollSCM('* * * * *')
-     }
 
-stages{
-        stage('Build'){
+     environment {
+        AWS_ACCESS_KEY_ID     = credentials('jenkins-aws-secret-key-id')
+        AWS_SECRET_ACCESS_KEY = credentials('jenkins-aws-secret-access-key')
+    }      
+
+    stages {
+        stage('Build') {
+            steps{
+            echo 'build'
+            }
+        }
+        stage('Test') {
             steps {
-                sh 'clean package'
+           echo 'test'
+            }
+        }
+        stage('Publish') {
+            steps {
+                sh 'mvn clean package'
             }
             post {
                 success {
-                    echo 'Archiving the artifacts'
-                    archiveArtifacts artifacts: '**/target/*.war'
-                    emailext body: 'Congragulation your build sucess', subject: 'Success', to: 'satishpanda430@gmail.com'
+                    //archiveArtifacts './web/target/*.war'
+                    sh 'aws configure set region ap-south-1'
+                    sh 'aws s3 cp ./web/target/*.war s3://powercloud21'
                 }
-          failure {
-                    emailext body: 'Congragulation your build failure', subject: 'Failure', to: 'satishpanda430@gmail.com'
-                }
-            }
-            }
-              stage('Deployment'){
-            steps {
-                echo 'Sucessfully Deploy'
             }
         }
-        
-    
-            }
+    }
 }
